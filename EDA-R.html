@@ -200,7 +200,7 @@
 
 <h3>命令列</h3>
 
-<pre><code class="r">install.views(&quot;topic-name&quot;)
+<pre><code class="r">install.views(&quot;topic-name&quot;) # 需要套件ctv
 install.packages(&quot;pkg-name&quot;, repos = &quot;來源&quot;)
 </code></pre>
 
@@ -583,7 +583,7 @@ rainfall2 &lt;- c(0.041,0.315,0.586,0.83,1.013,1.108,1.124,
 <pre><code class="r">Sys.time()
 </code></pre>
 
-<pre><code>## [1] &quot;2015-06-26 07:57:20 CST&quot;
+<pre><code>## [1] &quot;2015-07-01 07:32:07 CST&quot;
 </code></pre>
 
 <pre><code class="r">ISOdatetime(year = 1970, month = 1, day = 1, 
@@ -888,7 +888,7 @@ power &lt;- read.table(file = path, header = TRUE, sep = &quot;,&quot;)
   <article data-timings="">
     <h3>格式錯誤</h3>
 
-<pre><code class="r">path &lt;- &quot;data/ubikeweatherbig5.csv&quot;
+<pre><code class="r">path &lt;- &quot;data/ubike-hour-201412-big5.csv&quot;
 power &lt;- read.table(file = path, header = TRUE, sep = &quot;1&quot;)
 </code></pre>
 
@@ -914,7 +914,7 @@ power &lt;- read.table(file = path, header = TRUE, sep = &quot;1&quot;)
   <article data-timings="">
     <h3>編碼錯誤</h3>
 
-<pre><code class="r">path &lt;- &quot;data/ubikeweatherbig5.csv&quot;
+<pre><code class="r">path &lt;- &quot;data/ubike-hour-201412-big5.csv&quot;
 power &lt;- read.table(file = path, header = TRUE, sep = &quot;,&quot;, nrows = 10)
 </code></pre>
 
@@ -940,10 +940,11 @@ power &lt;- read.table(file = path, header = TRUE, sep = &quot;,&quot;, nrows = 
 <li>專家區</li>
 </ul>
 
-<pre><code class="r">path &lt;- &quot;data/ubikeweatherbig5.csv&quot;
+<pre><code class="r">path &lt;- &quot;data/ubike-hour-201412-big5.csv&quot;
 raw &lt;- read.table(file(path, encoding = &quot;BIG-5&quot;), 
                   header = TRUE, sep = &quot;,&quot;, 
                   nrows = 10)
+raw &lt;- read.csv(path, fileEncoding =&#39;BIG-5&#39;)
 raw &lt;- readLines(path, n = 10, encoding = &quot;BIG-5&quot;)
 raw2 &lt;- iconv(raw, from = &quot;BIG-5&quot;, to = &quot;UTF-8&quot;)
 write(raw2, &quot;data/ubikeweatherutf8.csv&quot;)
@@ -984,6 +985,71 @@ write(raw2, &quot;data/ubikeweatherutf8.csv&quot;)
 </slide>
 <slide class="largecontent" id="slide-43" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
+  <h2>合併多個檔案的資料</h2>
+</hgroup>
+<article class = 'flexbox vcenter'>
+<pre><code class="r"># 輸入對的路徑讀檔
+ub1=fread(&#39;data/ubike-hour-201412-utf8.csv&#39;)
+ub2=fread(&#39;data/ubike-hour-201501-utf8.csv&#39;)
+ub3=fread(&#39;data/ubike-hour-201502-utf8.csv&#39;)
+ub4=fread(&#39;data/ubike-hour-201503-utf8.csv&#39;)
+ub5=fread(&#39;data/ubike-hour-201504-utf8.csv&#39;)
+# &#39;ubike-hour-201504-big5.csv&#39; 有個欄位名稱跟其他的檔案不同
+ubike=rbind(ub1,ub2,ub3,ub4)
+colnames(ubike) =  c(&quot;日期&quot;, &quot;時間&quot;, &quot;場站代號&quot;, &quot;場站區域&quot;, &quot;場站名稱&quot;, 
+    &quot;緯度&quot;, &quot;經度&quot;, &quot;總停車格&quot;, &quot;平均車輛數&quot;, &quot;最大車輛數&quot;, 
+    &quot;最小車輛數&quot;, &quot;車輛數標準差&quot;, &quot;平均空位數&quot;, &quot;最大空位數&quot;, 
+    &quot;最小空位數&quot;, &quot;空位數標準差&quot;, &quot;平均氣溫&quot;, &quot;溼度&quot;, 
+    &quot;氣壓&quot;, &quot;最大風速&quot;, &quot;降雨量&quot;)
+</code></pre>
+
+</article>
+<!-- Presenter Notes -->
+</slide>
+<slide class="largecontent" id="slide-44" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<hgroup>
+  <h2>合併多個檔案的資料</h2>
+</hgroup>
+<article class = 'flexbox vcenter'>
+<pre><code class="r">colnames(ub5) &lt;- 
+  c(&quot;日期&quot;, &quot;時間&quot;, &quot;場站代號&quot;, &quot;場站區域&quot;, &quot;場站名稱&quot;, 
+    &quot;緯度&quot;, &quot;經度&quot;, &quot;總停車格&quot;, &quot;平均車輛數&quot;, &quot;最大車輛數&quot;, 
+    &quot;最小車輛數&quot;, &quot;車輛數標準差&quot;, &quot;平均空位數&quot;, &quot;最大空位數&quot;, 
+    &quot;最小空位數&quot;, &quot;空位數標準差&quot;, &quot;平均氣溫&quot;, &quot;溼度&quot;, 
+    &quot;氣壓&quot;, &quot;最大風速&quot;, &quot;降雨量&quot;)
+ubike=rbind(ubike,ub5)
+</code></pre>
+
+</article>
+<!-- Presenter Notes -->
+<aside class="note">
+  <section>
+    <ul>
+<li>進階版</li>
+</ul>
+
+<pre><code class="r">setwd(&#39;data&#39;) # 設定目前路徑
+filenames=dir() # 讀取目前路徑的目錄
+# 以關鍵字抓出我們要的檔案
+filenames=filenames[grepl(&#39;ubike-hour&#39;,filenames) &amp;
+                      grepl(&#39;big5&#39;,filenames)]
+# 讀取多個檔案，並且合併在一起
+ubike=do.call(rbind,lapply(filenames,function(x){
+  y=fread(x,header=FALSE)
+  setnames(y,1:21,
+    c(&quot;日期&quot;,&quot;時間&quot;,&quot;場站代號&quot;,&quot;場站區域&quot;,&quot;場站名稱&quot;, 
+      &quot;緯度&quot;,&quot;經度&quot;,&quot;總停車格&quot;,&quot;平均車輛數&quot;,&quot;最大車輛數&quot;, 
+      &quot;最小車輛數&quot;,&quot;車輛數標準差&quot;,&quot;平均空位數&quot;,&quot;最大空位數&quot;, 
+      &quot;最小空位數&quot;,&quot;空位數標準差&quot;,&quot;平均氣溫&quot;,&quot;溼度&quot;, 
+      &quot;氣壓&quot;,&quot;最大風速&quot;,&quot;降雨量&quot;))
+  }))
+</code></pre>
+
+  </section>
+</aside>
+</slide>
+<slide class="largecontent" id="slide-45" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<hgroup>
   <h2>未來的學習清單</h2>
 </hgroup>
 <article class = 'flexbox vcenter'>
@@ -1007,7 +1073,7 @@ write(raw2, &quot;data/ubikeweatherutf8.csv&quot;)
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-44" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-46" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>更擅長整理資料的工具：python</h2>
 </hgroup>
@@ -1019,7 +1085,7 @@ write(raw2, &quot;data/ubikeweatherutf8.csv&quot;)
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="segue dark" id="slide-45" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="segue dark" id="slide-47" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>資料的選取</h2>
   </hgroup>
@@ -1028,7 +1094,7 @@ write(raw2, &quot;data/ubikeweatherutf8.csv&quot;)
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-46" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-48" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>布林運算</h2>
   </hgroup>
@@ -1058,7 +1124,7 @@ write(raw2, &quot;data/ubikeweatherutf8.csv&quot;)
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-47" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-49" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>向量的選取</h2>
   </hgroup>
@@ -1085,7 +1151,7 @@ write(raw2, &quot;data/ubikeweatherutf8.csv&quot;)
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-48" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-50" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>多重條件</h2>
 </hgroup>
@@ -1106,7 +1172,7 @@ write(raw2, &quot;data/ubikeweatherutf8.csv&quot;)
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-49" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-51" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>小挑戰</h2>
   </hgroup>
@@ -1131,7 +1197,7 @@ power2 &lt;- c(59090445718, 61981666330, 67378329131, 66127460204.6482, 69696372
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-50" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-52" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>表格的選取 - 座標</h2>
   </hgroup>
@@ -1139,22 +1205,16 @@ power2 &lt;- c(59090445718, 61981666330, 67378329131, 66127460204.6482, 69696372
     <pre><code class="r">ubike[2, 3]
 </code></pre>
 
-<pre><code>## [1] 2
+<pre><code>## [1] 3
 </code></pre>
 
-<pre><code>##         日期 時間 場站代號
-## 1 2014-12-08   15        1
-## 2 2014-12-08   15        2
-## 3 2014-12-08   15        3
-## 4 2014-12-08   15        4
-## 5 2014-12-08   15        5
-## 6 2014-12-08   15        6
+<pre><code>## [1] 1 2 3
 </code></pre>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-51" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-53" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>表格的選取 - 欄</h2>
   </hgroup>
@@ -1162,24 +1222,22 @@ power2 &lt;- c(59090445718, 61981666330, 67378329131, 66127460204.6482, 69696372
     <pre><code class="r">head(ubike[[&quot;日期&quot;]]) 
 </code></pre>
 
-<pre><code>## [1] 2014-12-08 2014-12-08 2014-12-08
-## [4] 2014-12-08 2014-12-08 2014-12-08
-## 108 Levels: 2014-12-08 ... 2015-03-31
+<pre><code>## [1] &quot;2014-12-08&quot; &quot;2014-12-08&quot;
+## [3] &quot;2014-12-08&quot; &quot;2014-12-08&quot;
+## [5] &quot;2014-12-08&quot; &quot;2014-12-08&quot;
 </code></pre>
 
 <pre><code class="r"># head(ubike$日期)
 head(ubike[,1])
 </code></pre>
 
-<pre><code>## [1] 2014-12-08 2014-12-08 2014-12-08
-## [4] 2014-12-08 2014-12-08 2014-12-08
-## 108 Levels: 2014-12-08 ... 2015-03-31
+<pre><code>## [1] 1
 </code></pre>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-52" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-54" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>範例</h2>
   </hgroup>
@@ -1208,7 +1266,7 @@ ans5 &lt;- ubike[ans4,]
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-53" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-55" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>小挑戰</h2>
 </hgroup>
@@ -1238,7 +1296,7 @@ x3 &lt;- x3[[&quot;平均氣溫&quot;]]
   </section>
 </aside>
 </slide>
-<slide class="largecontent" id="slide-54" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-56" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>指令的壓縮</h2>
   </hgroup>
@@ -1262,7 +1320,7 @@ x4 &lt;- ubike[x3,]
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-55" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-57" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>2014 年最有影響的套件之一：magrittr</h2>
   </hgroup>
@@ -1286,7 +1344,7 @@ ubike[[&quot;場站代號&quot;]] %&gt;%
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-56" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-58" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>2014 年最有影響的套件之一：dplyr</h2>
 </hgroup>
@@ -1306,7 +1364,7 @@ ubike[[&quot;場站代號&quot;]] %&gt;%
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-57" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-59" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>學習dplyr的官方方式：<code>vignette</code></h2>
   </hgroup>
@@ -1323,7 +1381,7 @@ vignette(&quot;introduction&quot;, package = &quot;dplyr&quot;)
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-58" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-60" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>dplyr簡介</h2>
   </hgroup>
@@ -1347,7 +1405,7 @@ vignette(&quot;introduction&quot;, package = &quot;dplyr&quot;)
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="segue dark" id="slide-59" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="segue dark" id="slide-61" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>資料的探索</h2>
   </hgroup>
@@ -1356,7 +1414,7 @@ vignette(&quot;introduction&quot;, package = &quot;dplyr&quot;)
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-60" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-62" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>探索一個變數</h2>
 </hgroup>
@@ -1377,7 +1435,7 @@ vignette(&quot;introduction&quot;, package = &quot;dplyr&quot;)
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-61" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-63" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>利用說明文件了解函數內容</h2>
 </hgroup>
@@ -1397,7 +1455,7 @@ vignette(&quot;introduction&quot;, package = &quot;dplyr&quot;)
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-62" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-64" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>探索一個量化變數</h2>
 </hgroup>
@@ -1418,8 +1476,14 @@ vignette(&quot;introduction&quot;, package = &quot;dplyr&quot;)
 x2 &lt;- ubike[[&quot;日期&quot;]] == &quot;2015-03-01&quot;
 ubike[x1 &amp; x2, &quot;降雨量&quot;]
 sd(ubike[x1 &amp; x2, &quot;降雨量&quot;])
+</code></pre>
 
-library(dplyr)
+<pre><code>## Warning in var(if (is.vector(x)) x else
+## as.double(x), na.rm = na.rm): 強制變更過程中產生了
+## NA
+</code></pre>
+
+<pre><code class="r">library(dplyr)
 sd(select(
   filter(ubike, 場站代號 == 1, 日期 == &quot;2015-03-01&quot;),
   降雨量)[[&quot;降雨量&quot;]])
@@ -1433,7 +1497,7 @@ filter(ubike, 場站代號 == 1, 日期 == &quot;2015-03-01&quot;) %&gt;%
   </section>
 </aside>
 </slide>
-<slide class="largecontent" id="slide-63" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-65" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>各行政區的站點數：學習<code>group_by</code></h2>
   </hgroup>
@@ -1477,7 +1541,7 @@ filter(ubike, 場站代號 == 1, 日期 == &quot;2015-03-01&quot;) %&gt;%
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-64" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-66" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>探索一個質化變數</h2>
 </hgroup>
@@ -1500,7 +1564,7 @@ table(ubike[[&quot;場站名稱&quot;]]) %&gt;%
   </section>
 </aside>
 </slide>
-<slide class="largecontent" id="slide-65" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-67" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>探索變數間的關係</h2>
   </hgroup>
@@ -1514,7 +1578,7 @@ table(ubike[[&quot;場站名稱&quot;]]) %&gt;%
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-66" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-68" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>探索質化變數與質化變數的關係</h2>
   </hgroup>
@@ -1536,7 +1600,7 @@ Class Sex    Age
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-67" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-69" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>小挑戰：</h2>
 </hgroup>
@@ -1556,7 +1620,7 @@ Class Sex    Age
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="" id="slide-68" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="" id="slide-70" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>小挑戰（參考答案）</h2>
   </hgroup>
@@ -1576,7 +1640,7 @@ ftable(tbl[[&quot;時間&quot;]], tbl[[&quot;空位較多&quot;]])
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="dark segue" id="slide-69" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="dark segue" id="slide-71" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>ggplot2 簡介</h2>
   </hgroup>
@@ -1585,7 +1649,7 @@ ftable(tbl[[&quot;時間&quot;]], tbl[[&quot;空位較多&quot;]])
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-70" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-72" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>ggplot2簡介</h2>
 </hgroup>
@@ -1606,7 +1670,7 @@ ftable(tbl[[&quot;時間&quot;]], tbl[[&quot;空位較多&quot;]])
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-71" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-73" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>ggplot2基本架構</h2>
 </hgroup>
@@ -1625,7 +1689,7 @@ ftable(tbl[[&quot;時間&quot;]], tbl[[&quot;空位較多&quot;]])
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-72" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-74" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>ggplot2核心</h2>
 </hgroup>
@@ -1650,7 +1714,7 @@ ftable(tbl[[&quot;時間&quot;]], tbl[[&quot;空位較多&quot;]])
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-73" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-75" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>質化 v.s. 量化：繪圖之前的整理資料</h2>
   </hgroup>
@@ -1671,7 +1735,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE),
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-74" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-76" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>質化 v.s. 量化：barchart</h2>
   </hgroup>
@@ -1688,7 +1752,7 @@ ggplot(x3) +
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-75" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-77" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>質化 v.s. 量化：barchart</h2>
   </hgroup>
@@ -1698,7 +1762,7 @@ ggplot(x3) +
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-76" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-78" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>質化 v.s. 量化：boxplot</h2>
   </hgroup>
@@ -1713,7 +1777,7 @@ ggplot(x3) +
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-77" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-79" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>質化 v.s. 量化：boxplot</h2>
   </hgroup>
@@ -1723,16 +1787,14 @@ ggplot(x3) +
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-78" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-80" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>量化 v.s. 量化：繪圖之前的整理資料</h2>
 </hgroup>
 <article class = 'flexbox vcenter'>
 <h3>文山區各站點在&quot;2015-02&quot;的平均溼度 vs. 平均雨量</h3>
 
-<pre><code class="r"># grepl(&quot;要搜尋的字串&quot;, x, fixed = TRUE)
-
-x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站區域 == &quot;文山區&quot;) %&gt;%
+<pre><code class="r">x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站區域 == &quot;文山區&quot;) %&gt;%
   group_by(場站名稱) %&gt;% 
   summarise(平均降雨量 = mean(降雨量), 平均溼度 = mean(溼度))
 </code></pre>
@@ -1740,7 +1802,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-79" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-81" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>量化 v.s. 量化：Scatter Plot</h2>
   </hgroup>
@@ -1755,7 +1817,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-80" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-82" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>量化 v.s. 量化：Grouped Scatter Plot</h2>
   </hgroup>
@@ -1771,7 +1833,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-81" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-83" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>量化 v.s. 量化：Grouped Scatter Plot</h2>
   </hgroup>
@@ -1781,16 +1843,14 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-82" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-84" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>時間 v.s. 量化：繪圖之前的整理資料</h2>
   </hgroup>
   <article data-timings="">
     <h3>文山區各站點每日平均雨量</h3>
 
-<pre><code class="r"># grepl(&quot;要搜尋的字串&quot;, x, fixed = TRUE)
-
-x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站區域 == &quot;中和區&quot;) %&gt;%
+<pre><code class="r">x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站區域 == &quot;中和區&quot;) %&gt;%
   group_by(日期,場站名稱) %&gt;% 
   summarise(每日平均降雨量 = mean(降雨量))
 </code></pre>
@@ -1798,7 +1858,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-83" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-85" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>時間 v.s. 量化：Line Plot</h2>
   </hgroup>
@@ -1812,7 +1872,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-84" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="largecontent" id="slide-86" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>時間 v.s. 量化：Line Plot in Facets</h2>
   </hgroup>
@@ -1826,7 +1886,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-85" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-87" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   
 </hgroup>
@@ -1839,7 +1899,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-86" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-88" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>圖形的美化</h2>
 </hgroup>
@@ -1860,7 +1920,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="" id="slide-87" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="" id="slide-89" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2><a href="https://github.com/jrnold/ggthemes">ggthemes</a></h2>
   </hgroup>
@@ -1885,7 +1945,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="dark segue" id="slide-88" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="dark segue" id="slide-90" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>圖表的輸出</h2>
   </hgroup>
@@ -1894,7 +1954,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-89" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-91" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>輸出圖片</h2>
 </hgroup>
@@ -1908,7 +1968,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-90" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-92" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>輸出表格</h2>
 </hgroup>
@@ -1921,7 +1981,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-91" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-93" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>R markdown 火力展示</h2>
 </hgroup>
@@ -1933,7 +1993,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-92" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-94" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>shiny</h2>
 </hgroup>
@@ -1945,7 +2005,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="dark segue" id="slide-93" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="dark segue" id="slide-95" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>總結</h2>
   </hgroup>
@@ -1954,7 +2014,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
   </article>
   <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-94" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-96" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>本週目標</h2>
 </hgroup>
@@ -1982,7 +2042,7 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="largecontent" id="slide-95" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
+<slide class="largecontent" id="slide-97" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;" >
 <hgroup>
   <h2>掌握心法後，如何自行利用R 解決問題</h2>
 </hgroup>
@@ -2007,16 +2067,10 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
 </article>
 <!-- Presenter Notes -->
 </slide>
-<slide class="dark segue" id="slide-96" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
+<slide class="dark segue" id="slide-98" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <hgroup>
     <h2>Team Project</h2>
   </hgroup>
-  <article data-timings="">
-    
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-<slide class="" id="slide-97" style="background-image: url('libraries/frameworks/io2012-dsp/images/dsp-page.png'); background-repeat:no-repeat; background-position:center; background-size: 100% 100%;">
   <article data-timings="">
     
   </article>
@@ -2280,332 +2334,338 @@ x3 &lt;- filter(ubike, grepl(&quot;2015-02&quot;, 日期, fixed = TRUE), 場站�
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=43 title='未來的學習清單'>
+        data-slide=43 title='合併多個檔案的資料'>
          43
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=44 title='更擅長整理資料的工具：python'>
+        data-slide=44 title='合併多個檔案的資料'>
          44
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=45 title='資料的選取'>
+        data-slide=45 title='未來的學習清單'>
          45
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=46 title='布林運算'>
+        data-slide=46 title='更擅長整理資料的工具：python'>
          46
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=47 title='向量的選取'>
+        data-slide=47 title='資料的選取'>
          47
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=48 title='多重條件'>
+        data-slide=48 title='布林運算'>
          48
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=49 title='小挑戰'>
+        data-slide=49 title='向量的選取'>
          49
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=50 title='表格的選取 - 座標'>
+        data-slide=50 title='多重條件'>
          50
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=51 title='表格的選取 - 欄'>
+        data-slide=51 title='小挑戰'>
          51
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=52 title='範例'>
+        data-slide=52 title='表格的選取 - 座標'>
          52
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=53 title='小挑戰'>
+        data-slide=53 title='表格的選取 - 欄'>
          53
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=54 title='指令的壓縮'>
+        data-slide=54 title='範例'>
          54
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=55 title='2014 年最有影響的套件之一：magrittr'>
+        data-slide=55 title='小挑戰'>
          55
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=56 title='2014 年最有影響的套件之一：dplyr'>
+        data-slide=56 title='指令的壓縮'>
          56
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=57 title='學習dplyr的官方方式：<code>vignette</code>'>
+        data-slide=57 title='2014 年最有影響的套件之一：magrittr'>
          57
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=58 title='dplyr簡介'>
+        data-slide=58 title='2014 年最有影響的套件之一：dplyr'>
          58
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=59 title='資料的探索'>
+        data-slide=59 title='學習dplyr的官方方式：<code>vignette</code>'>
          59
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=60 title='探索一個變數'>
+        data-slide=60 title='dplyr簡介'>
          60
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=61 title='利用說明文件了解函數內容'>
+        data-slide=61 title='資料的探索'>
          61
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=62 title='探索一個量化變數'>
+        data-slide=62 title='探索一個變數'>
          62
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=63 title='各行政區的站點數：學習<code>group_by</code>'>
+        data-slide=63 title='利用說明文件了解函數內容'>
          63
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=64 title='探索一個質化變數'>
+        data-slide=64 title='探索一個量化變數'>
          64
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=65 title='探索變數間的關係'>
+        data-slide=65 title='各行政區的站點數：學習<code>group_by</code>'>
          65
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=66 title='探索質化變數與質化變數的關係'>
+        data-slide=66 title='探索一個質化變數'>
          66
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=67 title='小挑戰：'>
+        data-slide=67 title='探索變數間的關係'>
          67
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=68 title='小挑戰（參考答案）'>
+        data-slide=68 title='探索質化變數與質化變數的關係'>
          68
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=69 title='ggplot2 簡介'>
+        data-slide=69 title='小挑戰：'>
          69
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=70 title='ggplot2簡介'>
+        data-slide=70 title='小挑戰（參考答案）'>
          70
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=71 title='ggplot2基本架構'>
+        data-slide=71 title='ggplot2 簡介'>
          71
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=72 title='ggplot2核心'>
+        data-slide=72 title='ggplot2簡介'>
          72
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=73 title='質化 v.s. 量化：繪圖之前的整理資料'>
+        data-slide=73 title='ggplot2基本架構'>
          73
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=74 title='質化 v.s. 量化：barchart'>
+        data-slide=74 title='ggplot2核心'>
          74
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=75 title='質化 v.s. 量化：barchart'>
+        data-slide=75 title='質化 v.s. 量化：繪圖之前的整理資料'>
          75
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=76 title='質化 v.s. 量化：boxplot'>
+        data-slide=76 title='質化 v.s. 量化：barchart'>
          76
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=77 title='質化 v.s. 量化：boxplot'>
+        data-slide=77 title='質化 v.s. 量化：barchart'>
          77
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=78 title='量化 v.s. 量化：繪圖之前的整理資料'>
+        data-slide=78 title='質化 v.s. 量化：boxplot'>
          78
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=79 title='量化 v.s. 量化：Scatter Plot'>
+        data-slide=79 title='質化 v.s. 量化：boxplot'>
          79
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=80 title='量化 v.s. 量化：Grouped Scatter Plot'>
+        data-slide=80 title='量化 v.s. 量化：繪圖之前的整理資料'>
          80
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=81 title='量化 v.s. 量化：Grouped Scatter Plot'>
+        data-slide=81 title='量化 v.s. 量化：Scatter Plot'>
          81
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=82 title='時間 v.s. 量化：繪圖之前的整理資料'>
+        data-slide=82 title='量化 v.s. 量化：Grouped Scatter Plot'>
          82
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=83 title='時間 v.s. 量化：Line Plot'>
+        data-slide=83 title='量化 v.s. 量化：Grouped Scatter Plot'>
          83
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=84 title='時間 v.s. 量化：Line Plot in Facets'>
+        data-slide=84 title='時間 v.s. 量化：繪圖之前的整理資料'>
          84
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=85 title='NA'>
+        data-slide=85 title='時間 v.s. 量化：Line Plot'>
          85
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=86 title='圖形的美化'>
+        data-slide=86 title='時間 v.s. 量化：Line Plot in Facets'>
          86
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=87 title='<a href="https://github.com/jrnold/ggthemes">ggthemes</a>'>
+        data-slide=87 title='NA'>
          87
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=88 title='圖表的輸出'>
+        data-slide=88 title='圖形的美化'>
          88
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=89 title='輸出圖片'>
+        data-slide=89 title='<a href="https://github.com/jrnold/ggthemes">ggthemes</a>'>
          89
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=90 title='輸出表格'>
+        data-slide=90 title='圖表的輸出'>
          90
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=91 title='R markdown 火力展示'>
+        data-slide=91 title='輸出圖片'>
          91
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=92 title='shiny'>
+        data-slide=92 title='輸出表格'>
          92
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=93 title='總結'>
+        data-slide=93 title='R markdown 火力展示'>
          93
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=94 title='本週目標'>
+        data-slide=94 title='shiny'>
          94
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=95 title='掌握心法後，如何自行利用R 解決問題'>
+        data-slide=95 title='總結'>
          95
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=96 title='Team Project'>
+        data-slide=96 title='本週目標'>
          96
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=97 title='NA'>
+        data-slide=97 title='掌握心法後，如何自行利用R 解決問題'>
          97
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=98 title='Team Project'>
+         98
       </a>
     </li>
   </ul>

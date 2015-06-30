@@ -109,7 +109,7 @@ knit        : slidify::knit2slides
 
 
 ```r
-install.views("topic-name")
+install.views("topic-name") # 需要套件ctv
 install.packages("pkg-name", repos = "來源")
 ```
 
@@ -435,7 +435,7 @@ Sys.time()
 ```
 
 ```
-## [1] "2015-06-26 07:57:20 CST"
+## [1] "2015-07-01 07:32:07 CST"
 ```
 
 ```r
@@ -691,7 +691,7 @@ power <- read.table(file = path, header = TRUE, sep = ",")
 
 
 ```r
-path <- "data/ubikeweatherbig5.csv"
+path <- "data/ubike-hour-201412-big5.csv"
 power <- read.table(file = path, header = TRUE, sep = "1")
 ```
 
@@ -711,7 +711,7 @@ power <- read.table(file = path, header = TRUE, sep = "1")
 
 
 ```r
-path <- "data/ubikeweatherbig5.csv"
+path <- "data/ubike-hour-201412-big5.csv"
 power <- read.table(file = path, header = TRUE, sep = ",", nrows = 10)
 ```
 
@@ -730,10 +730,11 @@ power <- read.table(file = path, header = TRUE, sep = ",", nrows = 10)
 - 專家區
 
 ```r
-path <- "data/ubikeweatherbig5.csv"
+path <- "data/ubike-hour-201412-big5.csv"
 raw <- read.table(file(path, encoding = "BIG-5"), 
                   header = TRUE, sep = ",", 
                   nrows = 10)
+raw <- read.csv(path, fileEncoding ='BIG-5')
 raw <- readLines(path, n = 10, encoding = "BIG-5")
 raw2 <- iconv(raw, from = "BIG-5", to = "UTF-8")
 write(raw2, "data/ubikeweatherutf8.csv")
@@ -766,6 +767,63 @@ colnames(ubike) <-
   "氣壓", "最大風速", "降雨量")
 ```
 
+--- &vcenter .largecontent
+
+## 合併多個檔案的資料
+
+
+```r
+# 輸入對的路徑讀檔
+ub1=fread('data/ubike-hour-201412-utf8.csv')
+ub2=fread('data/ubike-hour-201501-utf8.csv')
+ub3=fread('data/ubike-hour-201502-utf8.csv')
+ub4=fread('data/ubike-hour-201503-utf8.csv')
+ub5=fread('data/ubike-hour-201504-utf8.csv')
+# 'ubike-hour-201504-big5.csv' 有個欄位名稱跟其他的檔案不同
+ubike=rbind(ub1,ub2,ub3,ub4)
+colnames(ubike) =  c("日期", "時間", "場站代號", "場站區域", "場站名稱", 
+    "緯度", "經度", "總停車格", "平均車輛數", "最大車輛數", 
+    "最小車輛數", "車輛數標準差", "平均空位數", "最大空位數", 
+    "最小空位數", "空位數標準差", "平均氣溫", "溼度", 
+    "氣壓", "最大風速", "降雨量")
+```
+
+--- &vcenter .largecontent
+
+## 合併多個檔案的資料
+
+
+```r
+colnames(ub5) <- 
+  c("日期", "時間", "場站代號", "場站區域", "場站名稱", 
+    "緯度", "經度", "總停車格", "平均車輛數", "最大車輛數", 
+    "最小車輛數", "車輛數標準差", "平均空位數", "最大空位數", 
+    "最小空位數", "空位數標準差", "平均氣溫", "溼度", 
+    "氣壓", "最大風速", "降雨量")
+ubike=rbind(ubike,ub5)
+```
+
+*** =pnotes
+
+- 進階版
+
+```r
+setwd('data') # 設定目前路徑
+filenames=dir() # 讀取目前路徑的目錄
+# 以關鍵字抓出我們要的檔案
+filenames=filenames[grepl('ubike-hour',filenames) &
+                      grepl('big5',filenames)]
+# 讀取多個檔案，並且合併在一起
+ubike=do.call(rbind,lapply(filenames,function(x){
+  y=fread(x,header=FALSE)
+  setnames(y,1:21,
+    c("日期","時間","場站代號","場站區域","場站名稱", 
+      "緯度","經度","總停車格","平均車輛數","最大車輛數", 
+      "最小車輛數","車輛數標準差","平均空位數","最大空位數", 
+      "最小空位數","空位數標準差","平均氣溫","溼度", 
+      "氣壓","最大風速","降雨量"))
+  }))
+```
 
 --- &vcenter .largecontent
 
@@ -895,18 +953,12 @@ ubike[2, 3]
 ```
 
 ```
-## [1] 2
+## [1] 3
 ```
 
 
 ```
-##         日期 時間 場站代號
-## 1 2014-12-08   15        1
-## 2 2014-12-08   15        2
-## 3 2014-12-08   15        3
-## 4 2014-12-08   15        4
-## 5 2014-12-08   15        5
-## 6 2014-12-08   15        6
+## [1] 1 2 3
 ```
 
 
@@ -920,9 +972,9 @@ head(ubike[["日期"]])
 ```
 
 ```
-## [1] 2014-12-08 2014-12-08 2014-12-08
-## [4] 2014-12-08 2014-12-08 2014-12-08
-## 108 Levels: 2014-12-08 ... 2015-03-31
+## [1] "2014-12-08" "2014-12-08"
+## [3] "2014-12-08" "2014-12-08"
+## [5] "2014-12-08" "2014-12-08"
 ```
 
 ```r
@@ -931,9 +983,7 @@ head(ubike[,1])
 ```
 
 ```
-## [1] 2014-12-08 2014-12-08 2014-12-08
-## [4] 2014-12-08 2014-12-08 2014-12-08
-## 108 Levels: 2014-12-08 ... 2015-03-31
+## [1] 1
 ```
 
 --- &twocol .largecontent
@@ -1106,7 +1156,15 @@ x1 <- ubike[["場站代號"]] == 1
 x2 <- ubike[["日期"]] == "2015-03-01"
 ubike[x1 & x2, "降雨量"]
 sd(ubike[x1 & x2, "降雨量"])
+```
 
+```
+## Warning in var(if (is.vector(x)) x else
+## as.double(x), na.rm = na.rm): 強制變更過程中產生了
+## NA
+```
+
+```r
 library(dplyr)
 sd(select(
   filter(ubike, 場站代號 == 1, 日期 == "2015-03-01"),
@@ -1345,8 +1403,6 @@ ggplot(x3) +
 
 
 ```r
-# grepl("要搜尋的字串", x, fixed = TRUE)
-
 x3 <- filter(ubike, grepl("2015-02", 日期, fixed = TRUE), 場站區域 == "文山區") %>%
   group_by(場站名稱) %>% 
   summarise(平均降雨量 = mean(降雨量), 平均溼度 = mean(溼度))
@@ -1394,8 +1450,6 @@ ggplot(x3) +
 
 
 ```r
-# grepl("要搜尋的字串", x, fixed = TRUE)
-
 x3 <- filter(ubike, grepl("2015-02", 日期, fixed = TRUE), 場站區域 == "中和區") %>%
   group_by(日期,場站名稱) %>% 
   summarise(每日平均降雨量 = mean(降雨量))
@@ -1533,5 +1587,3 @@ ggplot(x3) +thm+las2+facet_wrap(~場站名稱,nrow=2)+ # facet_wrap將各站的�
 --- .dark .segue
 
 ## Team Project
-
----

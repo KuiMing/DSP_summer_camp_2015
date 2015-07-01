@@ -255,7 +255,7 @@ One
 ```
 
 ```
-## [1] 1
+## Error in eval(expr, envir, enclos): 找不到物件 'One'
 ```
 
 ```r
@@ -435,7 +435,7 @@ Sys.time()
 ```
 
 ```
-## [1] "2015-07-01 07:32:07 CST"
+## [1] "2015-07-02 07:41:16 CST"
 ```
 
 ```r
@@ -815,7 +815,7 @@ filenames=filenames[grepl('ubike-hour',filenames) &
                       grepl('big5',filenames)]
 # 讀取多個檔案，並且合併在一起
 ubike=do.call(rbind,lapply(filenames,function(x){
-  y=fread(x,header=FALSE)
+  y=fread(x)
   setnames(y,1:21,
     c("日期","時間","場站代號","場站區域","場站名稱", 
       "緯度","經度","總停車格","平均車輛數","最大車輛數", 

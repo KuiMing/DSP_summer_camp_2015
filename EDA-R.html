@@ -363,7 +363,7 @@ utils:::menuInstallLocal()
   <pre><code class="r">One
 </code></pre>
 
-<pre><code>## [1] 1
+<pre><code>## Error in eval(expr, envir, enclos): 找不到物件 &#39;One&#39;
 </code></pre>
 
 <pre><code class="r">One &lt;- 1
@@ -583,7 +583,7 @@ rainfall2 &lt;- c(0.041,0.315,0.586,0.83,1.013,1.108,1.124,
 <pre><code class="r">Sys.time()
 </code></pre>
 
-<pre><code>## [1] &quot;2015-07-01 07:32:07 CST&quot;
+<pre><code>## [1] &quot;2015-07-02 07:41:16 CST&quot;
 </code></pre>
 
 <pre><code class="r">ISOdatetime(year = 1970, month = 1, day = 1, 
@@ -1035,7 +1035,7 @@ filenames=filenames[grepl(&#39;ubike-hour&#39;,filenames) &amp;
                       grepl(&#39;big5&#39;,filenames)]
 # 讀取多個檔案，並且合併在一起
 ubike=do.call(rbind,lapply(filenames,function(x){
-  y=fread(x,header=FALSE)
+  y=fread(x)
   setnames(y,1:21,
     c(&quot;日期&quot;,&quot;時間&quot;,&quot;場站代號&quot;,&quot;場站區域&quot;,&quot;場站名稱&quot;, 
       &quot;緯度&quot;,&quot;經度&quot;,&quot;總停車格&quot;,&quot;平均車輛數&quot;,&quot;最大車輛數&quot;, 
